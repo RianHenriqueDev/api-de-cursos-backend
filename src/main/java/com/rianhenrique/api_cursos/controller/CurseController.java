@@ -5,6 +5,7 @@ import com.rianhenrique.api_cursos.entities.CurseEntity;
 import com.rianhenrique.api_cursos.service.CurseService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -67,35 +68,48 @@ public class CurseController {
     }
 
 
-    @PutMapping("/:id")
-    public CurseEntityDTO updateCurse(@PathVariable Long id, @RequestBody String name, @RequestBody String category) {
-
-        CurseEntityDTO curseEntityDTO = new CurseEntityDTO();
+    @PutMapping("/{id}")
+    public ResponseEntity<CurseEntityDTO> updateCurse(@PathVariable Long id, @RequestBody CurseEntityDTO curseEntityDTO) {
 
         var curso = this.curseService.findById(id);
 
-        BeanUtils.copyProperties(curso, curseEntityDTO);
+        System.out.println("DADOS RECEBIDOS: "  + curseEntityDTO);
+        System.out.println("DADOS RECEBIDOS: "  + curseEntityDTO.getName());
 
-        if (name != null && category != null) {
-            curso.setName(name);
-            curso.setCategory(category);
+        BeanUtils.copyProperties(curseEntityDTO, curso);
+
+        if (curseEntityDTO.getName() != null && curseEntityDTO.getCategory() != null) {
+            curso.setName(curseEntityDTO.getName());
+            curso.setCategory(curseEntityDTO.getCategory());
+            curso.setTeacher(curseEntityDTO.getTeacher());
+            curso.setActive(curseEntityDTO.isActive());
             curso.setUpdatedAt(LocalDateTime.now());
-            this.curseService.save(curso);
-        } else if (name != null && category == null) {
-            curso.setName(name);
-            curso.setUpdatedAt(LocalDateTime.now());
+            System.out.println("CURSO NOVO 1 : " + curso);
 
             this.curseService.save(curso);
-        } else if (name == null && category != null) {
-            curso.setCategory(category);
+        } else if (curseEntityDTO.getName() != null && curseEntityDTO.getCategory() == null) {
+            curso.setName(curseEntityDTO.getName());
+            curso.setTeacher(curseEntityDTO.getTeacher());
+            curso.setActive(curseEntityDTO.isActive());
             curso.setUpdatedAt(LocalDateTime.now());
+            System.out.println("CURSO NOVO 2 : " + curso);
+
+            this.curseService.save(curso);
+        } else if (curseEntityDTO.getName() == null && curseEntityDTO.getCategory() != null) {
+            curso.setCategory(curseEntityDTO.getCategory());
+            curso.setTeacher(curseEntityDTO.getTeacher());
+            curso.setActive(curseEntityDTO.isActive());
+            curso.setUpdatedAt(LocalDateTime.now());
+            System.out.println("CURSO NOVO 3 : " + curso);
+
             this.curseService.save(curso);
         }
 
-        return curseEntityDTO;
+
+        return ResponseEntity.ok(curseEntityDTO);
     }
 
-    @DeleteMapping("/:id")
+    @DeleteMapping("/{id}")
     public void deleteCurse(@PathVariable Long id) {
         var curse = this.curseService.findById(id);
 
@@ -105,7 +119,7 @@ public class CurseController {
 
     }
 
-    @PatchMapping("/:id/active")
+    @PatchMapping("/{id}/active")
     public CurseEntityDTO patchCurse(@PathVariable Long id) {
         CurseEntityDTO curseEntityDTO = new CurseEntityDTO();
         var curse = this.curseService.toogleStatusCurse(id);

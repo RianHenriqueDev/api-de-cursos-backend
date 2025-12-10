@@ -22,7 +22,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/h2-console/**").permitAll()
-                        .requestMatchers("/cursos").permitAll()
+                        .requestMatchers("/cursos/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .headers(header-> header.disable());

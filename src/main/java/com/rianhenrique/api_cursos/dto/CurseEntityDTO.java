@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 public class CurseEntityDTO {
 
 
+    private Long id;
     private String name;
     private String category;
     private boolean active;
