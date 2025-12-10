@@ -2,17 +2,12 @@ package com.rianhenrique.api_cursos.controller;
 
 import com.rianhenrique.api_cursos.dto.CurseEntityDTO;
 import com.rianhenrique.api_cursos.entities.CurseEntity;
-import com.rianhenrique.api_cursos.repositories.ProfessorRepository;
 import com.rianhenrique.api_cursos.service.CurseService;
-import com.rianhenrique.api_cursos.service.ProfessorService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -22,9 +17,6 @@ public class CurseController {
     @Autowired
     private CurseService curseService;
 
-    @Autowired
-    private ProfessorRepository professorRepository;
-
 
     @PostMapping("")
     public CurseEntityDTO createCurse(@RequestBody CurseEntity curseEntity) {
@@ -33,14 +25,11 @@ public class CurseController {
         BeanUtils.copyProperties(curseEntity, curseEntityDTO);
 
 
-        this.professorRepository.findById(curseEntity.getProfessorId()).orElseThrow(()-> {
-            throw new RuntimeException("Professor não encontrado!");
-        });
 
             var resultado = this.curseService.save(curseEntity);
 
-            if(curseEntity.getName().isEmpty() || curseEntity.getCategory().isEmpty()){
-                throw new RuntimeException("Falta o nome ou a categoria do Curso!");
+            if(curseEntity.getName().isEmpty() || curseEntity.getCategory().isEmpty() || curseEntity.getTeacher().isEmpty()){
+                throw new RuntimeException("Está faltando informações, dentre: Nome, Categoria e Professor do Curso!");
 
             }
 
@@ -49,7 +38,8 @@ public class CurseController {
             curseEntityDTO.setUpdatedAt(resultado.getUpdatedAt());
             curseEntityDTO.setName(curseEntity.getName());
             curseEntityDTO.setCategory(curseEntity.getCategory());
-            curseEntityDTO.setProfessorId(curseEntity.getProfessorId());
+            curseEntityDTO.setTeacher(curseEntity.getTeacher());
+
 
         return curseEntityDTO;
 

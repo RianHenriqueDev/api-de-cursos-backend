@@ -18,5 +18,5 @@ public class CurseEntityDTO {
     private boolean active;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private Long professorId;
+    private String teacher;
 }

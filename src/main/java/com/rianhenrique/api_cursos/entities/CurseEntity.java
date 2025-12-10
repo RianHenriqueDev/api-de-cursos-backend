@@ -23,7 +23,6 @@ public class CurseEntity {
     @Column(nullable = true)
     private LocalDateTime updatedAt;
 
-    @Column(columnDefinition = "int",nullable = false)
-    private Long professorId;
+   private String teacher;
 
 }
